@@ -6,12 +6,16 @@ router.post("/", function(req, res) {
     wall.add(res, req.body);
 });
 
-router.get("/", function(req, res) {
-    wall.get(res, req.query);
+router.get("/unmolded", function(req, res) {
+    wall.getUnmolded(res, req.query);
 });
 
 router.post("/mold", function(req, res) {
     wall.mold(res, req.body)
+})
+
+router.get("/", function(req, res) {
+    wall.getWall(res, req.query);
 })
 
 router.put("/", (req, res) => {

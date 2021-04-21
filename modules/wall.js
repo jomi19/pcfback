@@ -20,6 +20,21 @@ const wall = {
 
     },
 
+    getWall: async function(res, body) {
+        const sql = "SELECT * FROM wallInfo WHERE id = ?"
+        const id = body.id
+        let data;
+        try {
+            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta väggen med det idt")
+        }
+        catch(err){
+            return(err)
+        }
+        return (res.status(200).json({
+            data: data[0]
+        }))
+    },
+
     mold: function(res, body) {
         const sql = "UPDATE wallStatus SET molded = ? where id = ? LIMIT 1";
         const time = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -37,14 +52,22 @@ const wall = {
         })
     },
 
-    get: async function(res, body) {
-        const sql = "SELECT * FROM wallInfo WHERE id = ?;"
+    getUnmolded: async function(res, body) {
+        const sql = "SELECT * FROM wallInfo WHERE projectId = ? AND molded IS NULL"
         const id = body.id;
-        const data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta idt");
+        let data;
+        try  {
+            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta idt");
+            console.log(data)
+        }
+        catch {
+
+        }
+        
 
         console.log(id)
         return (res.status(200).json({
-            data: data[0]
+            data: data
         }));
     }
 }
