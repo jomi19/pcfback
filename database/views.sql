@@ -68,14 +68,17 @@ CREATE VIEW wallInfo AS
         w.length,
 		w.projectId,
         w.castings,
-        w.other
+        w.other,
+        p.projectName,
+        p.costumer
     FROM wall AS w
     LEFT OUTER JOIN wallStatus AS s ON w.id = s.wallId
     LEFT OUTER JOIN followUp AS a ON s.id = a.wallStatusId
+    LEFT OUTER JOIN project AS p ON w.projectId = p.id
     ORDER BY w.wallName
 ;
 
-SELECT * FROM wallInfo WHERE id = 1;
+SELECT * FROM wallInfo WHERE id = 16;
 DROP TRIGGER IF EXISTS addWallStatus;
 DELIMITER ;;
 CREATE TRIGGER addWallStatus
@@ -91,7 +94,7 @@ CREATE TRIGGER addWallStatus
 DELIMITER ;
     
     
-SELECT * FROM wallInfo WHERE projectId = 1;
+SELECT * FROM wallInfo WHERE id = 1 & molded IS NULL;
 
 
 SELECT * FROM wallStatus;
