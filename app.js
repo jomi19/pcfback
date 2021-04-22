@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const followUp = require("./routes/followup");
 
 const project = require("./routes/project");
 const wall = require("./routes/wall");
@@ -25,8 +26,8 @@ app.get("/", (req, res) => {
     })
 });
 
-app.use("/project", project)
-
-app.use("/wall", wall)
+app.use("/project", project);
+app.use("/followup", followUp);
+app.use("/wall", wall);
 
 app.listen(port, () => console.log(`App listning at port ${port}`))

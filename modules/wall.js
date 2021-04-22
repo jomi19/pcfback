@@ -20,6 +20,42 @@ const wall = {
 
     },
 
+    getReadyToShip: async function(res, body) {
+        console.log("test")
+        const sql = "SELECT * FROM wallInfo WHERE projectId = ? AND molded IS NOT NULL";
+        const id = body.id;
+        let data;
+        try  {
+            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta idt");
+            console.log(data)
+        }
+        catch {
+
+        }
+        return (res.status(200).json({
+            data: data
+        }))
+    },
+
+    getReadyToFollowUp: async function(res, body) {
+        const sql = "SELECT * FROM wallInfo WHERE projectId = ? AND molded IS NOT NULL AND followUp IS NULL"
+        const id = body.id;
+        let data;
+        try  {
+            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta idt");
+            console.log(data)
+        }
+        catch {
+
+        }
+        
+
+        console.log(id)
+        return (res.status(200).json({
+            data: data
+        }));
+    },
+
     getWall: async function(res, body) {
         const sql = "SELECT * FROM wallInfo WHERE id = ?"
         const id = body.id

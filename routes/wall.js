@@ -11,7 +11,15 @@ router.get("/unmolded", function(req, res) {
 });
 
 router.post("/mold", function(req, res) {
-    wall.mold(res, req.body)
+    wall.mold(res, req.body);
+})
+
+router.get("/followup", function(req, res) {
+    wall.getReadyToFollowUp(res, req.query);
+})
+
+router.get("/ship", function(req, res) {
+    wall.getReadyToShip(res, req.query);
 })
 
 router.get("/", function(req, res) {

@@ -70,7 +70,8 @@ CREATE VIEW wallInfo AS
         w.castings,
         w.other,
         p.projectName,
-        p.costumer
+        p.costumer,
+        COUNT(s.id)-COUNT(s.molded) AS wallsLeft
     FROM wall AS w
     LEFT OUTER JOIN wallStatus AS s ON w.id = s.wallId
     LEFT OUTER JOIN followUp AS a ON s.id = a.wallStatusId
