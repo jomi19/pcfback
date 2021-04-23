@@ -70,17 +70,17 @@ CREATE VIEW wallInfo AS
         w.castings,
         w.other,
         p.projectName,
-        p.costumer,
-        COUNT(s.id)-COUNT(s.molded) AS wallsLeft
+        p.costumer
     FROM wall AS w
     LEFT OUTER JOIN wallStatus AS s ON w.id = s.wallId
     LEFT OUTER JOIN followUp AS a ON s.id = a.wallStatusId
     LEFT OUTER JOIN project AS p ON w.projectId = p.id
     ORDER BY w.wallName
 ;
-
+SELECT * FROM followUp;
 SELECT * FROM wallInfo WHERE id = 16;
 DROP TRIGGER IF EXISTS addWallStatus;
+DROP TRIGGER IF EXISTS followUpStatus;
 DELIMITER ;;
 CREATE TRIGGER addWallStatus
 	AFTER INSERT ON wall FOR EACH ROW
@@ -91,7 +91,14 @@ CREATE TRIGGER addWallStatus
             SET x = x + 1;
 		END WHILE;
 	END;;
-    
+
+CREATE TRIGGER followUpStatus
+	AFTER INSERT ON followUp FOR EACH ROW
+    BEGIN
+		UPDATE wallStatus
+		SET followUp = CURRENT_TIMESTAMP
+		WHERE id = NEW.wallStatusId; 
+    END;;
 DELIMITER ;
     
     
