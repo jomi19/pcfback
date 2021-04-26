@@ -51,7 +51,7 @@ CREATE TABLE followUp (
     castings VARCHAR(255),
     comments VARCHAR(255),
     lifts VARCHAR(255),
-    crossmesure INT NOT NULL,
+    crossMesure INT NOT NULL,
     surface VARCHAR(255),
     ursparningar VARCHAR(255),
     form VARCHAR(255),

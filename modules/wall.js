@@ -1,5 +1,5 @@
 const error = require("./error.js");
-const sqlFunctions = require("./functions/sqlfunctions");
+const dbrequest = require("./functions/dbrequest");
 const mysql = require("mysql");
 const { connect } = require("../routes/project.js");
 let con = mysql.createConnection({
@@ -26,7 +26,7 @@ const wall = {
         const id = body.id;
         let data;
         try  {
-            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta idt");
+            data = await dbrequest.getById(res, sql, id, "Kunde inte hitta idt");
             console.log(data)
         }
         catch {
@@ -42,7 +42,7 @@ const wall = {
         const id = body.id;
         let data;
         try  {
-            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta idt");
+            data = await dbrequest.getById(res, sql, id, "Kunde inte hitta idt");
             console.log(data)
         }
         catch {
@@ -61,7 +61,7 @@ const wall = {
         const id = body.id
         let data;
         try {
-            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta väggen med det idt")
+            data = await dbrequest.getById(res, sql, id, "Kunde inte hitta väggen med det idt")
         }
         catch(err){
             return(err)
@@ -93,7 +93,7 @@ const wall = {
         const id = body.id;
         let data;
         try  {
-            data = await sqlFunctions.getById(res, sql, id, "Kunde inte hitta idt");
+            data = await dbrequest.getById(res, sql, id, "Kunde inte hitta idt");
             console.log(data)
         }
         catch {

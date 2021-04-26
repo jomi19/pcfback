@@ -1,96 +1,10 @@
 "use strict";
 const error = require("./error.js");
-const mysql = require("mysql");
-const { connect } = require("../routes/project.js");
-let con = mysql.createConnection({
-    host: "localhost",
-    user: "user",
-    password: "pass",
-    database: "exjobb"
-})
+const con = require("../db/db.js");
+const dbRequest = require("./functions/dbrequest.js");
+const { isInt } = require("./functions/myfunctions.js");
 
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("connected");
-})
 
-function isInt(value) {
-    var x;
-    if (isNaN(value)) {
-      return false;
-    }
-    x = parseFloat(value);
-    return (x | 0) === x;
-}
-
-function getById(res, sql, id, checkLength = false) {
-    return new Promise((resolve,reject) => {
-        con.query(sql, [id], (err, result) => {
-            if(err) {
-                reject(error.error(res, 500, "/project", "Database error", err.message));
-            }
-
-            if(result.length < 1 && checkLength) {
-                reject(error.error(res, 404, "/Poject", "Kunde inte hitta idt"));
-            }
-
-            resolve(result)
-        });
-    });
-}
-
-function InsertProject(res, sql, costumer, projectName, duedate ) {
-    return new Promise((resolve, reject) => {
-        con.query(sql, [costumer, projectName, duedate], async (err, result) => {
-            if (err) {
-                reject(error.error(res, 500, "/project", "Database error", err.message));
-            }
-            console.log(result.insertId);
-            resolve(result.insertId);
-        })
-    })
-}
-
-function insertWalls(res, sql, walls, id) {
-    let insertWalls = [];
-    console.log(walls);
-    console.log("Börjar med väggar")
-    return new Promise((resolve, reject) => {
-        walls.forEach((element) => {
-            let wall = element.split(", ");
-            console.log(wall)
-            wall.unshift(id);
-            while(wall.length < 7) {
-                wall.push(null);
-            }
-            console.log(wall)
-            insertWalls.push(wall);
-        });
-        con.query(sql, [insertWalls], (err, result) => {
-            if (err) {
-                console.log(err)
-                reject(error.error(res, 500, "/project", "Database error", err.message));
-            }
-            resolve();
-        })
-    });
-}
-
-function getAllBySql(res, sql, path, message) {
-    con.query(sql, (err, result) => {
-        if (err) {
-            return error.error(res, 500, path, "Database error", err.message);
-        };
-
-        if (result.length < 1) {
-             return error.error(res, 404, path, message);
-        }
-
-        return res.status(200).json({
-            data: result
-         });
-     })
-}
 const project = {
     get: async function(res, body) {
         let sql = "SELECT * FROM getProject WHERE id = ?";
@@ -102,9 +16,9 @@ const project = {
         }
 
         try {
-            let project =  await getById(res, sql, id, true);
+            let project =  await dbRequest.getById(res, sql, id, true);
     
-            let walls = await getById(res, wallSql, id);
+            let walls = await dbRequest.getById(res, wallSql, id);
     
             return (res.status(200).json({
                 data: project,
@@ -121,7 +35,7 @@ const project = {
     getAll: function(res, body) {
         const sql = "SELECT * FROM getProjects";
 
-        return getAllBySql(res, sql, "/project", "Finns inga aktiva projet")
+        return dbRequest.getAllBySql(res, sql, "/project", "Finns inga aktiva projet")
     },
 
     add: async function(res, body) {
@@ -135,8 +49,8 @@ const project = {
 
         con.query("BEGIN");
         try {
-            let id = await InsertProject(res, sql, costumer, projectName, duedate);
-            await insertWalls(res, wallSql , walls, id);
+            let id = await dbRequest.InsertProject(res, sql, costumer, projectName, duedate);
+            await dbRequest.insertWalls(res, wallSql , walls, id);
             con.query("COMMIT");
 
             return res.status(200).json({
@@ -183,7 +97,7 @@ const project = {
     getArchive: function(res, query) {
         const sql = "SELECT * FROM getArchive";
 
-        return getAllBySql(res, sql, "/project/archive", "Inga akriverade projet")
+        return dbRequest.getAllBySql(res, sql, "/project/archive", "Inga akriverade projet")
     }
 }
 
