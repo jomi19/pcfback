@@ -1,6 +1,7 @@
 const { connect } = require("../../routes/project.js");
 const mysql = require("mysql");
 const { DB } = require("../../config.json");
+const error = require("./../error");
 
 let con = mysql.createConnection({
     host: DB.HOST,
