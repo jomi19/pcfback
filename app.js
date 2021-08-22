@@ -3,31 +3,27 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const followUp = require("./routes/followup");
-
 const project = require("./routes/project");
 const wall = require("./routes/wall");
+const { PORT } = require("./config.json");
 
-const port = 1337;
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
 app.use((req, res, next) => {
-    console.log(req.method);
-    console.log(req.body);
+    if(process.env.NODE_ENV != "test") {
+        console.log(req.method);
+        console.log(req.body)
+        console.log(req.query);
+    }
     next();
-});
-
-app.get("/", (req, res) => {
-    con.query("SELECT * FROM projekt", (err, result, fields) => {
-        if (err) throw err;
-        res.send(result);
-    })
 });
 
 app.use("/project", project);
 app.use("/followup", followUp);
 app.use("/wall", wall);
 
-app.listen(port, () => console.log(`App listning at port ${port}`))
+const server = app.listen(PORT, () => console.log(`App listning at port ${PORT}`));
+
+module.exports = server;

@@ -4,5 +4,6 @@
         "USER" : "user",
         "PASSWORD" : "pass",
         "DATABASE_NAME" : "exjobb"
-    }
+    },
+    "PORT" : 1337
 }

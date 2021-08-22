@@ -1,5 +1,68 @@
-USE exjobb;
-DROP VIEW IF EXISTS getProjects;
+DROP DATABASE IF EXISTS pcftest;
+CREATE DATABASE pcftest;
+GRANT ALL PRIVILEGES
+ON *.*
+TO 'user'@'%'
+WITH GRANT OPTION
+;
+USE pcftest;
+
+CREATE TABLE project (
+	id INT AUTO_INCREMENT,
+    costumer VARCHAR(50) NOT NULL,
+    projectName VARCHAR(50),
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    duedate TIMESTAMP,
+    done TIMESTAMP,
+    deleted TIMESTAMP,
+
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE wall (
+	id INT AUTO_INCREMENT,
+    projectId INT NOT NULL,
+    wallName VARCHAR(20) NOT NULL,
+    width INT NOT NULL,
+    height INT NOT NULL,
+    length INT NOT NULL,
+    castings VARCHAR(255),
+    other VARCHAR(255),
+    amount INT NOT NULL,
+
+    PRIMARY KEY (id),
+	FOREIGN KEY (projectId) REFERENCES project(id)
+);
+
+CREATE TABLE wallStatus(
+	id INT AUTO_INCREMENT,
+    wallId INT NOT NULL,
+    molded TIMESTAMP,
+    followUp TIMESTAMP,
+    shipped TIMESTAMP,
+    
+    PRIMARY KEY (id),
+    FOREIGN KEY (wallId) REFERENCES wall(id)
+);
+
+CREATE TABLE followUp (
+	id INT AUTO_INCREMENT,
+	wallStatusId INT NOT NULL UNIQUE,
+    height INT NOT NULL,
+    width INT NOT NULL,
+    length INT NOT NULL,
+    castings VARCHAR(255),
+    comments VARCHAR(255),
+    lifts VARCHAR(255),
+    crossMesure INT NOT NULL,
+    surface VARCHAR(255),
+    ursparningar VARCHAR(255),
+    form VARCHAR(255),
+    
+    PRIMARY KEY (id),
+    FOREIGN KEY (wallStatusId) REFERENCES wallStatus(id)
+);
+
 
 CREATE VIEW getProjects AS
 	SELECT 
@@ -17,7 +80,7 @@ CREATE VIEW getProjects AS
 		GROUP BY p.id
 ;
 
-DROP VIEW IF EXISTS getArchive;
+
 CREATE VIEW getArchive AS
 	SELECT 
 		p.id,
@@ -35,9 +98,6 @@ CREATE VIEW getArchive AS
 		GROUP BY p.id
 ;
 
-SELECT * FROM getArchive;
-    
-DROP VIEW IF EXISTS getProject;
 CREATE VIEW getProject AS
 	SELECT  p.costumer,
 			p.projectName,
@@ -54,7 +114,7 @@ CREATE VIEW getProject AS
     GROUP BY p.id
 ;
 
-DROP VIEW IF EXISTS wallInfo;
+
 CREATE VIEW wallInfo AS
 	SELECT 
 		w.wallName,
@@ -79,37 +139,6 @@ CREATE VIEW wallInfo AS
     ORDER BY w.wallName
 ;
 
-DROP VIEW IF EXISTS viewFollowUp;
-CREATE VIEW viewFollowUp AS
-	SELECT
-		s.id,
-		p.costumer,
-		p.projectName,
-		w.width AS wallWidth,
-		w.height AS wallHeight,
-		w.length AS wallLength,
-		w.castings AS wallCastings,
-		w.wallName,
-		w.other,
-		s.molded,
-		s.followUp,
-		f.height,
-		f.width,
-		f.length,
-		f.castings,
-		f.comments,
-		f.lifts,
-		f.crossMesure,
-		f.surface,
-		f.ursparningar
-	FROM followUp AS f
-	LEFT OUTER JOIN wallStatus AS s ON f.wallStatusId = s.id
-	LEFT OUTER JOIN wall AS w ON s.wallId = w.id
-	LEFT OUTER JOIN project AS p ON w.projectId = p.id
-;
-
-DROP TRIGGER IF EXISTS addWallStatus;
-DROP TRIGGER IF EXISTS followUpStatus;
 DELIMITER ;;
 CREATE TRIGGER addWallStatus
 	AFTER INSERT ON wall FOR EACH ROW
@@ -129,9 +158,9 @@ CREATE TRIGGER followUpStatus
 		WHERE id = NEW.wallStatusId; 
     END;;
 DELIMITER ;
-    
-    
-SELECT * FROM wallInfo WHERE id = 1 & molded IS NULL;
 
 
-SELECT * FROM wallStatus;
+INSERT INTO project (costumer, projectName) VALUES ("Test", "project"),("Second test", "second project");
+INSERT INTO wall (projectId, wallName, width, height, length, amount) VALUES (1, "v-01", 150, 140, 20, 1), (1, "v-02", 150, 140, 20, 2);
+UPDATE wallStatus SET molded = CURRENT_TIMESTAMP WHERE id = 1 OR id = 2;
+INSERT INTO followUp (wallStatusId, width, height, length, lifts, crossMesure, surface) VALUES (3, 20, 30, 20, "OK", 0, "OK")

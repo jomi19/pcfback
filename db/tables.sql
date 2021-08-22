@@ -1,3 +1,5 @@
+USE exjobb;
+
 DROP TABLE IF EXISTS followUp;
 DROP TABLE IF EXISTS wallStatus;
 DROP TABLE IF EXISTS wall;

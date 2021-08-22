@@ -4,16 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "pretest": "bash db/test.bash",
+    "test": "nyc --reporter=html --reporter=text --reporter=clover mocha --timeout 10000 --exit"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chai-string": "^1.5.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "normalize.css": "^8.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0"
   }
 }

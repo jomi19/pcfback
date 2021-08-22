@@ -1,4 +1,4 @@
-const followUp = {
+const error = {
     error: function(res, status, source, title, detail = title) {
         return res.status(status).json({
             errors: {
@@ -11,4 +11,4 @@ const followUp = {
     },
 };
 
-module.exports = followUp;
+module.exports = error;
