@@ -1,5 +1,5 @@
 "use strict";
-const error = require("./error.js");
+const respons = require("./respons.js");
 const dbRequest = require("./functions/dbrequest")
 const { isInt } = require("./functions/myfunctions.js");
 
@@ -10,7 +10,7 @@ const project = {
         let id = body.id;
 
         if (!isInt(id) || id < 1) {
-            return error.error(res, 400, "/project", "Id måste vara en integer", "Ange id som en integer för att söka")
+            return respons.error(res, 400, "/project", "Id måste vara en integer", "Ange id som en integer för att söka")
         }
 
         try {
@@ -42,7 +42,7 @@ const project = {
         const projectName = body.project;
         const duedate = body.duedate || null;
 
-        if(!costumer) return error.error(res, 400, "/project", "Kund inte angett");
+        if(!costumer) return respons.error(res, 400, "/project", "Kund inte angett");
         if(!projectName) return error.error(res, 400, "/project", "Inget projekt namn angett");
 
         dbRequest.begin();
@@ -62,7 +62,21 @@ const project = {
         
     },
  
-    delete: async function(res, body) {
+    unArchive: async function(res, body) {
+        const sql = "UPDATE project SET deleted = ? WHERE id = ? LIMIT 1";
+        const id = body.id;
+        console.log("returbning")
+        if (!isInt(id) || id < 1) {
+            return error.error(res, 400, "/project", "Id måste vara en integer", "Ange id som en integer för att söka")
+        }
+        try {
+            await dbRequest.insert(res, sql, [null, id], "Delete")
+        } catch(err) {
+            return err
+        }
+    },
+
+    archive: async function(res, body) {
         const sql = "UPDATE project SET deleted = ? WHERE id = ? LIMIT 1;"
         const id = body.id;
         const time = new Date().toISOString().slice(0, 19).replace('T', ' ');

@@ -17,6 +17,10 @@ router.get("/ready", function(req, res) {
     followUp.getReadyToFollowUp(res, req.query);
 });
 
+router.put("/", function(req, res) {
+    followUp.updateFollowUp(res, req.body);
+});
+
 
 
 module.exports = router;

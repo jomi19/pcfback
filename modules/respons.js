@@ -1,4 +1,6 @@
-const error = {
+
+
+const respons = {
     error: function(res, status, source, title, detail = title) {
         return res.status(status).json({
             errors: {
@@ -11,4 +13,4 @@ const error = {
     },
 };
 
-module.exports = error;
+module.exports = respons;

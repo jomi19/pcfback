@@ -1,5 +1,5 @@
 "use strict";
-const error = require("./error.js");
+const respons = require("./respons.js");
 const dbrequest = require("./functions/dbrequest");
 const { isInt } = require("./functions/myfunctions.js");
 
@@ -64,7 +64,7 @@ const followUp = {
         let validationError = insertValidation(body)
         let fields;
         if (validationError) {
-            return error.error(res, 400, "/project", "Felaktig syntax", `Saknar eller felaktigt anget ${validationError}`);
+            return respons.error(res, 400, "/project", "Felaktig syntax", `Saknar eller felaktigt anget ${validationError}`);
         }
 
 
@@ -83,9 +83,9 @@ const followUp = {
         const sql = "SELECT * FROM wallInfo WHERE projectId = ? AND molded IS NOT NULL AND followUp IS NULL"
         const id = body.id;
         let data;
-        console.log(typeof id)
+
         if (!isInt(id)) {
-            return error.error(res, 400, "/followUp/Ready", `Felaktigt anget id`);
+            return respons.error(res, 400, "/followUp/Ready", `Felaktigt anget id`);
         }
         try {
             data = await dbrequest.getById(res, sql, id, "Kunde inte hitta idt", true);
@@ -117,6 +117,26 @@ const followUp = {
         return (res.status(200).json({
             data: data[0]
         }));
+    },
+
+    updateFollowUp: async function (res, body) {
+        let sql = "UPDATE followUp SET height = ?, width = ?, length = ?, castings = ?, comments = ?, lifts = ?, crossMesure = ?, surface = ?, ursparningar = ? WHERE id = ? LIMIT 1;";
+        let fields = makeInsertArray(body);
+        let validationError = insertValidation(body)
+
+        console.log(fields)
+        if (validationError) {
+            return respons.error(res, 400, "/project", "Felaktig syntax", `Saknar eller felaktigt anget ${validationError}`);
+        }
+
+        try {
+            data = await dbrequest.update(res, sql, fields, "PUT /followUp")
+            
+        }
+        catch (err) {
+            return err;
+        }
+        return (res.status(204).json());
     }
 };
 

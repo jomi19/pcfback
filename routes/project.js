@@ -23,8 +23,13 @@ router.put("/", (req, res) => {
 });
 
 router.delete("/", (req, res) => {
-    project.delete(res, req.query)
+    project.archive(res, req.query)
 })
+
+router.post("/unarchive", function(req, res) {
+    console.log("testaar")
+    project.unArchive(res, req.body)
+});
 
 
 module.exports = router;

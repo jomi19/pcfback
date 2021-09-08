@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const { DB } = require("../../config.json");
-const error = require("./../error");
+const respons = require("../respons");
+const error = require("../respons");
 let dbName = DB.DATABASE_NAME
 
 if (process.env.NODE_ENV === "test") {
@@ -13,6 +14,7 @@ let con = mysql.createConnection({
   password: DB.PASSWORD,
   database: dbName,
 });
+
 con.connect(function (err) {
   if (err) throw err;
   console.log(`Connected to ${dbName}`);
@@ -25,11 +27,11 @@ const dbRequest = {
 
     con.query(sql, (err, result) => {
       if (err) {
-        return error.error(res, 500, path, "Database error", err.message);
+        return respons.error(res, 500, path, "Database error", err.message);
       }
 
       if (result.length < 1) {
-        return error.error(res, 404, path, message);
+        return respons.error(res, 404, path, message);
       }
 
       return res.status(200).json({
@@ -43,12 +45,12 @@ const dbRequest = {
       con.query(sql, [id], (err, result) => {
         if (err) {
           reject(
-            error.error(res, 500, "/project", "Database error", err.message)
+            respons.error(res, 500, "/project", "Database error", err.message)
           );
         }
         if (result.length < 1 && checkLength) {
 
-          reject(error.error(res, 404, "/Poject", "Kunde inte hitta idt"));
+          reject(respons.error(res, 404, "/Poject", "Kunde inte hitta idt"));
         }
         resolve(result);
       });
@@ -71,11 +73,13 @@ const dbRequest = {
     return new Promise((resolve, reject) => {
       con.query(sql, variables, (err, result) => {
         if (err) {
-          reject(error.error(res, 500, path, "Database error", err.message));
+          
+          reject(respons.error(res, 500, path, "Database error", err.message));
         }
 
         if (result.changedRows === 0) {
-          reject(error.error(res, 404, path, "Kunde inte hitta fältet/fälten som skulle updateras"));
+          console.log(result)
+          reject(respons.error(res, 404, path, "Kunde inte hitta fältet/fälten som skulle updateras"));
         }
         resolve(result.changedRows)
       });
@@ -87,7 +91,7 @@ const dbRequest = {
       con.query(sql, [costumer, projectName, duedate], async (err, result) => {
         if (err) {
           reject(
-            error.error(res, 500, "/project", "Database error", err.message)
+            respons.error(res, 500, "/project", "Database error", err.message)
           );
         }
         resolve(result.insertId);
@@ -103,13 +107,13 @@ const dbRequest = {
     }); 
     return new Promise((resolve, reject) => {
       if (insertWalls.length < 1) {
-        reject(error.error(res, 400, "Project", "No walls", "No walls added to project"))
+        reject(respons.error(res, 400, "Project", "No walls", "No walls added to project"))
         return
       }
       con.query(sql, [insertWalls], (err, result) => {
         if (err) {
           reject(
-            error.error(res, 500, "/project", "Database error", err.message)
+            respons.error(res, 500, "/project", "Database error", err.message)
           );
         }
         resolve();
@@ -124,7 +128,7 @@ const dbRequest = {
       con.query(sql, variables, (err, result) => {
         if (err) {
           console.log("ERROR")
-          reject(error.error(res, 500, path, "Database Error", err.message))
+          reject(respons.error(res, 500, path, "Database Error", err.message))
          
         };
         if(result) {

@@ -1,4 +1,4 @@
-const error = require("./error.js");
+const respons = require("./respons.js");
 const dbrequest = require("./functions/dbrequest");
 const myFunctions = require("./functions/myfunctions");
 
@@ -75,11 +75,16 @@ const wall = {
     },
 
     mold: async function (res, body) {
-        let sql = `UPDATE wallStatus SET molded = '${myFunctions.sqlTimestomp()}' WHERE id = `;
+        let date = body.date;
+        let sql = `UPDATE wallStatus SET molded = STR_TO_DATE('${date}-12', '%Y-%m-%d-%H') WHERE id = `;
         const walls = body.walls;
         let addSql = [];
 
-        console.log(typeof walls)
+        if(!date) {
+            sql = `UPDATE wallStatus SET molded = '${myFunctions.sqlTimestomp()}' WHERE id = `
+        }
+        
+
         if (typeof walls != "object" && !myFunctions.isInt(walls)) return error.error(res, 404, "Felaktigt anget id")
         if (typeof walls == "object" && walls.length < 1) return error.error(res, 404, "/wall/ship", "Inget vägg id angett");
 
@@ -94,11 +99,10 @@ const wall = {
             addSql.push(walls);
             sql = `${sql}?;`;
         }
-        console.log(walls)
+        console.log(sql)
         try {
             changedRows = await dbrequest.update(res, sql, walls, "/walls/mold")
         } catch (err) {
-            console.log("array")
             return error.error(res, 404, "/wall/mold", err.error, err.message);;
         }
 
@@ -116,8 +120,8 @@ const wall = {
         try {
             data = await dbrequest.getById(res, sql, id, "Kunde inte hitta idt");
         }
-        catch {
-
+        catch(err) {
+            console.log(err)
         }
 
         return (res.status(200).json({
