@@ -1,4 +1,3 @@
-USE exjobb;
 DROP VIEW IF EXISTS getProjects;
 
 CREATE VIEW getProjects AS

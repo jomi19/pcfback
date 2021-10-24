@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
     if(process.env.NODE_ENV != "test") {
         console.log(req.method);
-        console.log(req.body)
+        console.log(req.path)
         console.log(req.query);
     }
     next();

@@ -1,9 +1,1 @@
-{
-    "DB": {
-        "HOST" : "localhost",
-        "USER" : "user",
-        "PASSWORD" : "pass",
-        "DATABASE_NAME" : "exjobb"
-    },
-    "PORT" : 1337
-}
+{"DB": {"HOST": "localhost", "USER": "dev", "PASSWORD": "devpass", "DATABASE_NAME": "pcf"}, "PORT": 1337}
