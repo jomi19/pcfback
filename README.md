@@ -3,7 +3,7 @@
 ## Project setup
 ```
 npm install
-npm setup // Sets up config file and mysql database
+npm run setup  (Sets up config file and mysql database)
 ```
 
 ## Start the api
